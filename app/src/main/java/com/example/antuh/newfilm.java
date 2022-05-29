@@ -1,21 +1,23 @@
 package com.example.antuh;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.util.JsonReader;
+import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,9 +29,9 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import android.os.Bundle;
 
 public class newfilm extends AppCompatActivity {
-
     TextView tvInfo;
     EditText tvName;
     newfilm.MyTask mt;
@@ -47,12 +49,11 @@ public class newfilm extends AppCompatActivity {
         lvMain.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         mt = new newfilm.MyTask();
         mt.execute();
-
     }
     public void onclick(View v) {
         mtn = new newfilm.MyTaskN();
         mtn.execute(tvName.getText().toString());
-//        lvMain.getCheckedItemPositions();
+        // lvMain.getCheckedItemPositions();
     }
     class MyTaskTF extends AsyncTask<String, Void, Void > {
         @Override
@@ -80,7 +81,7 @@ public class newfilm extends AppCompatActivity {
             }
             myConnection.setDoOutput(true);
             try {
-                myConnection.getOutputStream().write( ("id=3&СinemaID=" + params[0]+"&FilmsID="+params[1]).getBytes());
+                myConnection.getOutputStream().write( ("id=3&CinemaID=" + params[0]+"&FilmsID="+params[1]).getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
             };
@@ -140,7 +141,7 @@ public class newfilm extends AppCompatActivity {
             }
             myConnection.setDoOutput(true);
             try {
-                myConnection.getOutputStream().write( ("id=2&name=" + params[0]).getBytes());
+                myConnection.getOutputStream().write( ("id=2&Name=" + params[0]).getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
             };
@@ -186,10 +187,10 @@ public class newfilm extends AppCompatActivity {
                     mttf.execute(st[1],result);
                 };
             }
-            tvInfo.setText("Выполнено");
+            tvInfo.setText("Фильм успешно добавлен");
         }
     }
-    class MyTask extends AsyncTask<Void, Void, ArrayList<String[]>>{
+    class MyTask extends AsyncTask<Void, Void, ArrayList<String[]> >{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -201,7 +202,7 @@ public class newfilm extends AppCompatActivity {
             ArrayList<String[]> res = new ArrayList<>();
             HttpURLConnection myConnection = null;
             try {
-                URL githubEndpoint = new URL("http://10.0.2.2:8080/json?id=3");
+                URL githubEndpoint = new URL("http://10.0.2.2:8080/kino?id=3");
                 myConnection =
                         (HttpURLConnection) githubEndpoint.openConnection();
             } catch (MalformedURLException e) {
@@ -301,10 +302,10 @@ public class newfilm extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<String[]> result) {
             super.onPostExecute(result);
-            newfilm.ClAdapter adapter3=new newfilm.ClAdapter(tvInfo.getContext(),result);
+            newfilm.ClAdapter clAdapter=new newfilm.ClAdapter(tvInfo.getContext(),result);
 //            lvMain = (ListView) findViewById(R.id.lvMain);
-            lvMain.setAdapter(adapter3);
-            tvInfo.setText("End");
+            lvMain.setAdapter(clAdapter);
+            tvInfo.setText("Кинотеатры для показа добавленного фильма:");
         }
 
     }
@@ -348,5 +349,4 @@ public class newfilm extends AppCompatActivity {
             return true;
         }
     }
-
 }
